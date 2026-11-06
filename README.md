@@ -7,3 +7,5 @@
 --> Semana 4: Matrizes e vetores.
 
 --> Semana 5: Funções e conceitos de modularização em geral.
+
+--> Semana 6: Manipulações de arquivos.
