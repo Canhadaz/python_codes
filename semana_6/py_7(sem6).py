@@ -21,42 +21,94 @@ def adicionar_contato():
             print("Preencha todos os campos!")
 
     arquivo_vazio = os.path.exists(ARQUIVO) == 0
-    with open(ARQUIVO, "a", newline = "", encoding = "utf-8") as arq:
-        escritor = csv.DictWriter(arq, fieldnames=COLUNAS)
+    try:
+        with open(ARQUIVO, "a", newline = "", encoding = "utf-8") as arq:
+            escritor = csv.DictWriter(arq, fieldnames=COLUNAS)
 
-        if arquivo_vazio:
-            escritor.writeheader()
+            if arquivo_vazio:
+                escritor.writeheader()
 
-        escritor.writerow({
-            "nome": nome,
-            "telefone": telefone,
-            "email": email
-        })
+            escritor.writerow({
+                "nome": nome,
+                "telefone": telefone,
+                "email": email
+            })
 
-        print("CONTATO ADICIONADO COM SUCESSO!")
+            print("CONTATO ADICIONADO COM SUCESSO!")
+    except (OSError, csv.Error):
+        print("Não foi possível ler os contatos!")
+        return None
 
 def listar_contatos():
-    with open(ARQUIVO, "r", newline = "", encoding = "utf-8") as arq:
-        leitor = csv.DictReader(arq)
+    try:
+        with open(ARQUIVO, "r", newline = "", encoding = "utf-8") as arq:
+            leitor = csv.DictReader(arq)
 
-        if not leitor:
-            print("Não tem contato não pae")
-            return
+            print("CONTATOS:\n")
 
-        print("CONTATOS:\n")
-
-        for contato in leitor:
-            print(f'Nome: {contato["nome"]}')
-            print(f'Nome: {contato["telefone"]}')
-            print(f'Nome: {contato["email"]}')
-            print("")
-
+            for contato in leitor:
+                print(f'Nome    : {contato["nome"]}')
+                print(f'Telefone: {contato["telefone"]}')
+                print(f'Email   : {contato["email"]}')
+                print("")
+    except FileNotFoundError:
+        print("O arquivo não foi encontrado!")
+        return None
+    except (OSError, csv.Error):
+        print("Não foi possível ler os contatos!")
+        return None
 
 def buscar_contato():
-    nome = input("Digite o nome a ser buscado").lower().split()
+    encontrado = False
+    nome = input("Digite o nome a ser buscado:\n--> ").lower().strip()
+
+    try:
+        with open(ARQUIVO, "r", newline = "", encoding="utf-8") as arq:
+            leitor = csv.DictReader(arq)
+
+            for contato in leitor:
+                if nome in contato["nome"].lower():
+                    print(f"Nome    : {contato["nome"]}")
+                    print(f'Telefone: {contato["telefone"]}')
+                    print(f'Email   : {contato["email"]}')
+                    print("")
+
+                    encontrado = True
+                
+            if not encontrado:
+                print("Tem nada aqui com esse nome não")
+    except FileNotFoundError:
+        print("O arquivo não foi encontrado!")
+        return None
+    except (OSError, csv.Error):
+        print("Não foi possível ler os contatos!")
+        return None
 
 def remover_contato():
-    nome = input("Nome do contato para remover: ").strip().lower()
+    nome = input("Nome do contato para remover:\n--> ").strip().lower()
+    restantes = []
+
+    try:
+        with open(ARQUIVO, "r", newline="", encoding="utf-8") as arq:
+            leitor = csv.DictReader(arq)
+
+            for contato in leitor:
+                if nome not in contato["nome"].lower():
+                    restantes.append(contato)
+    
+    except FileNotFoundError:
+        print("O arquivo não foi encontrado!")
+        return None
+    except (OSError, csv.Error):
+        print("Não foi possível ler os contatos!")
+        return None
+    
+    with open(ARQUIVO, "w", newline="", encoding="utf-8") as arq:
+        escritor = csv.DictWriter(arq, fieldnames=COLUNAS)
+
+        escritor.writeheader()
+        escritor.writerows(restantes)
+        print("Removido com sucesso!")
 
 def main():
     while True: 
