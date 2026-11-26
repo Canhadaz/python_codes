@@ -1,0 +1,2 @@
+fe470e69-7343-403c-b560-815f692dbf65|murilo|monitor nao liga|baixo|aberto
+1f73e1c5-7953-4f23-a0e2-ac860126c200|matheus|impressora nao funciona|medio|aberto
